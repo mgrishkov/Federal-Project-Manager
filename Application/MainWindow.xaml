@@ -1,0 +1,52 @@
+﻿<dx:DXWindow xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FederalProjectManager"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:View="clr-namespace:FederalProjectManager.View"
+    x:Class="FederalProjectManager.MainWindow"
+    Title="Federal Project Manager" Height="700" Width="1100" ShowTitle="False" ShowIcon="False"
+    SnapsToDevicePixels="True" UseLayoutRounding="True"
+    dx:ThemeManager.ThemeName="MetropolisDark" WindowState="Maximized" ShowInTaskbar="True"
+    Loaded="DXWindow_Loaded">
+
+    <Grid Background="#FF333333">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="3" />
+            <RowDefinition Height="*" MinHeight="3" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <local:Header x:Uid="HeaderView" x:Name="HeaderView" 
+                          Width="Auto" RefreshActiveProjectRequest="HeaderView_RefreshActiveProjectRequest"/>
+        </StackPanel>
+
+
+        <View:ActiveProjectsView x:Name="ActiveProjectView" x:Uid="ActiveProjectView" Grid.Row="1"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                                FocusedProjectChanged="ActiveProjectView_FocusedProjectChanged"
+                                ProjectDoubleClick="ActiveProjectView_ProjectDoubleClick"/>
+
+        
+        <StackPanel Grid.Row="2">
+            <dxb:BarManager>
+                <dxb:BarManager.Items>
+                    <dxb:BarStaticItem x:Name="VersionNumberStaticItem" Content="{Binding ApplicationVersion}"/>
+                    <dxb:BarStaticItem x:Name="BuildDateStaticItem" Content="{Binding ApplicationBuildDate}"/>
+                </dxb:BarManager.Items>
+                <dxb:BarManager.Bars>
+                    <dxb:Bar UseWholeRow="True" IsStatusBar="True" >
+                        <dxb:Bar.DockInfo>
+                            <dxb:BarDockInfo />
+                        </dxb:Bar.DockInfo>
+                        <dxb:Bar.ItemLinks>
+                            <dxb:BarStaticItemLink BarItemName="VersionNumberStaticItem"/>
+                            <dxb:BarStaticItemLink BarItemName="BuildDateStaticItem"/>
+                        </dxb:Bar.ItemLinks>
+                    </dxb:Bar>
+                </dxb:BarManager.Bars>
+            </dxb:BarManager>
+        </StackPanel>
+    </Grid>
+
+</dx:DXWindow>

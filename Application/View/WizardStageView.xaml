@@ -1,0 +1,107 @@
+﻿<UserControl xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"  x:Class="FederalProjectManager.View.WizardStageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" 
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" 
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:local="clr-namespace:FederalProjectManager.View"
+             mc:Ignorable="d" dx:ThemeManager.ThemeName="MetropolisDark"
+             d:DesignHeight="460" d:DesignWidth="260">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="0,10,0,0">
+            <dxb:BarManager x:Name="toolBarManager">
+                <dxb:BarManager.Items>
+                    <dxb:BarSplitButtonItem Name="AddStageSplitButton" Content="Добавиь стадию" ArrowAlignment="Top" 
+                                            IsEnabled="{Binding IsAddStageEnabled}"
+                                            ItemClick="AddStage_ItemClick">
+                        <dxb:BarSplitButtonItem.PopupControl>
+                            <dxb:PopupControlContainer Name="StageTemplatesPopup"
+                                                       Closed="StageTemplatesPopup_Closed">
+                                <dxe:ListBoxEdit Name="StageTemplatesListBox" 
+                                                 ItemsSource="{Binding StageTemplates}"
+                                                 Width="Auto" MinWidth="120" AllowItemHighlighting="True"
+                                                 EditValueChanged="TemplatesListBox_EditValueChanged">
+                                    <dxe:ListBoxEdit.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Value}" />
+                                        </DataTemplate>
+                                    </dxe:ListBoxEdit.ItemTemplate>
+                                </dxe:ListBoxEdit>
+                            </dxb:PopupControlContainer>
+                        </dxb:BarSplitButtonItem.PopupControl>
+                    </dxb:BarSplitButtonItem>
+                    <dxb:BarButtonItem x:Name="DeleteStageButton" Content="Исключить стадию" 
+                                       IsEnabled="{Binding IsRemoveStageEnabled}"
+                                       ItemClick="DeleteStage_ItemClick"/>
+                </dxb:BarManager.Items>
+
+                <dxb:BarManager.Bars>
+                    <dxb:Bar UseWholeRow="True" >
+                        <dxb:Bar.DockInfo>
+                            <dxb:BarDockInfo />
+                        </dxb:Bar.DockInfo>
+                        <dxb:Bar.ItemLinks>
+                            <dxb:BarSplitButtonItemLink BarItemName="AddStageSplitButton" />
+                            <dxb:BarButtonItemLink BarItemName="DeleteStageButton"/>
+                        </dxb:Bar.ItemLinks>
+                    </dxb:Bar>
+                </dxb:BarManager.Bars>
+
+            </dxb:BarManager>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+            <dxlc:TileLayoutControl x:Uid="StagesTileControl" x:Name="StagesTileControl"
+                                Grid.Row="1"  Height="440" Width="260"
+                                Orientation="Horizontal" Background="Transparent"
+                                Padding="10,10,10,10"
+                                ItemsSource="{Binding Stages}"
+                                TileClick="Tile_Click">
+                <dxlc:TileLayoutControl.Resources>
+                    <Style TargetType="dxlc:Tile">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <Grid Width="225">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="32"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5,0,0,5"
+                                               Stretch="Fill" Width="16" Height="16"
+                                               Source="{Binding IsEditable, Converter= {local:IsEditabeToIconConverter}}" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="5,5,5,5" 
+                                                   FontFamily="Segoe UI Light" FontSize="14" 
+                                                   Text="{Binding Name}"/>
+                                        <Image Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Margin="5,0,0,5"
+                                               Stretch="Fill" Width="16" Height="16"
+                                               Source="{Binding StageState, Converter= {local:StageStateToIconConverter}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Background" Value="{Binding IsFocused, Converter={local:TileBackgroundConverter}}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Height" Value="25" />
+                        <Setter Property="Width" Value="232" />
+                    </Style>
+                </dxlc:TileLayoutControl.Resources>
+
+            </dxlc:TileLayoutControl>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,232 @@
+﻿<UserControl xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"  
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+             xmlns:ORM="clr-namespace:FederalProjectManager.ORM" 
+             xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase" 
+             x:Class="FederalProjectManager.View.ActiveProjectsView" 
+             xmlns:local="clr-namespace:FederalProjectManager.View"
+             xmlns:model="clr-namespace:FederalProjectManager.Model"
+             mc:Ignorable="d" dx:ThemeManager.ThemeName="MetropolisDark"
+             d:DesignHeight="600" d:DesignWidth="1280">
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <dxlc:TileLayoutControl x:Name="StatisticsTile" x:Uid="StatisticsTile"
+                                    DataContext="{Binding ProjectStatistics}"
+                                    Background="{x:Null}" Padding="10,10,10,10" AllowItemMoving="False"
+                                    Orientation="Horizontal" ScrollViewer.VerticalScrollBarVisibility="Disabled" TileClick="TileLayoutControl_TileClick">
+                <dxlc:TileLayoutControl.Resources>                   
+                    <Style TargetType="dxlc:Tile">
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding}" FontFamily="Segoe UI" FontSize="18" Margin="5,5,5,5" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="BorderBrush" Value="#FFDA8515"/>
+                        <Setter Property="BorderThickness" Value="{DynamicResource NormalTileBorder}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Height" Value="60" />
+                        <Setter Property="Width" Value="154" />
+                    </Style>                    
+                </dxlc:TileLayoutControl.Resources>
+
+                <dxlc:Tile x:Name="HighPriorityTile"
+                           Content="{Binding HightPriority, 
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Срочно {0}'}"
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource HighPriorityTile}"
+                           Tag="HighPriority">
+                </dxlc:Tile>
+                <dxlc:Tile x:Name="TodayTile"
+                           Content="{Binding Today,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Сегодня {0}'}"
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource TodayTile}"
+                           Tag="Today">
+                </dxlc:Tile>
+                <dxlc:Tile x:Name="CurrentTile"
+                           Content="{Binding Current,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Текущие {0}'}" 
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource CurrentTile}"
+                           BorderThickness="{DynamicResource FocusedTileBorder}" Tag="Current">
+                </dxlc:Tile>
+                <dxlc:Tile x:Name="OverstayTile"
+                           Content="{Binding Overstay,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Просрочено {0}'}" 
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource OverstayTile}"
+                           Tag="Overstay"/>
+                <dxlc:Tile x:Name="ProductionCompletedTile"
+                           Content="{Binding ProductionCompleted,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Произведено {0}'}" 
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource ProductionCompletedTile}"
+                           Tag="ProductionCompleted"/>
+                <dxlc:Tile x:Name="PrepareTile"
+                           Content="{Binding Prepare,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Черновик {0}'}" 
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource PrepareTile}"
+                           Tag="Prepare">
+                </dxlc:Tile>
+                <dxlc:Tile x:Name="ArchiveTile"
+                           Content="{Binding Archive,
+                                     Converter={local:StringFormatConverter},
+                                     ConverterParameter='Архив {0}'}" 
+                           HorizontalAlignment="Left" Size="Small" Background="{StaticResource ArchiveTile}"
+                           Tag="Archive">
+                </dxlc:Tile>
+            </dxlc:TileLayoutControl>
+        </StackPanel>
+        
+        <dxg:GridControl x:Uid="ActiveProjectsGrid" x:Name="ActiveProjectsGrid"
+                         Grid.Row="1"
+                         AutoPopulateColumns="False" Focusable="False" 
+                         ItemsSource="{Binding ActiveProjects}">
+            <dxg:GridControl.Resources>
+                <Style x:Key="PriorityStyle"
+                       TargetType="TextBlock">
+                    <Setter Property="Background" Value="{Binding Value, Converter={local:PriorityConverter}}"/>
+                </Style>
+                <Style x:Key="AdditionalInfo" TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="Margin" Value="5,0,0,0"/>
+                    <Setter Property="Foreground" Value="Gainsboro"/>
+                </Style>
+                <Style x:Key="MainInfo" TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="Margin" Value="5,0,0,3"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Style>
+            </dxg:GridControl.Resources>
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn Header="Приоритет" FieldName="ProjectPriority" Width="48" SortOrder="Descending" SortIndex="0">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource PriorityStyle}"
+                                           Width="24" Height="24" Margin="5,0,5,0"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Дата сдачи" FieldName="ProjectDeadlineDate" 
+                                MinWidth="160" SortOrder="Ascending" SortIndex="1">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Data.DeadLineaption}" 
+                                           Style="{StaticResource MainInfo}" />
+                                <TextBlock Text="{Binding Data.ProjectDeadlineDate, StringFormat='dd.MM.yyyy HH:mm'}" 
+                                           Style="{StaticResource AdditionalInfo}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Проект" FieldName="ProjectTypeName"
+                                MinWidth="200" Width="260">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Data.ProjectTypeName}" 
+                                           Style="{StaticResource MainInfo}" />
+                                <TextBlock Text="{Binding Data.ProjectCaption, Converter={local:StringCutConverter}}" 
+                                           ToolTip="{Binding Data.ProjectCaption}"
+                                           Style="{StaticResource AdditionalInfo}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Заказчик" FieldName="CustomerName"
+                                MinWidth="180" Width="220">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition MaxWidth="5"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Data.CustomerName, Converter={local:StringCutConverter}}"
+                                           ToolTip="{Binding Data.CustomerName}"
+                                           Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+                                           Style="{StaticResource MainInfo}" />
+                                <TextBlock Text="{Binding Data.ContactName}" 
+                                           Grid.Row="1" Grid.Column="0" 
+                                           Style="{StaticResource AdditionalInfo}" />
+                                <TextBlock Text="{Binding Data.ContactPhone}" 
+                                           HorizontalAlignment="Left"  Grid.Row="1" Grid.Column="2" 
+                                           Style="{StaticResource AdditionalInfo}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Ответственный" FieldName="ResponsiblePerson">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Value}"
+                                           Style="{StaticResource MainInfo}" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Прогресс" FieldName="ProjectProgress"
+                                Width="200">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel HorizontalAlignment="Left">
+                                <dxe:ProgressBarEdit EditValue="{ Binding Value }"
+                                                     Height="20" Width="180" Margin="5,5,0,0"
+                                                     DisplayFormatString="Выполнено {0}%" ContentDisplayMode="Value"/>
+                                <TextBlock Text="{Binding Data.LastStageName}"
+                                           Style="{StaticResource AdditionalInfo}" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+                <dxg:GridColumn Header="Стоимость" FieldName="ProjectPrice" 
+                                Visible="{Binding IsShowPrices}">
+                    <dxg:GridColumn.DisplayTemplate>
+                        <ControlTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Value, StringFormat=C, ConverterCulture=ru-RU}"
+                                           Style="{StaticResource MainInfo}" HorizontalAlignment="Right"/>
+                                <TextBlock Text="{Binding Data.ProjectPaid, StringFormat=C, ConverterCulture=ru-RU}"
+                                           Style="{StaticResource AdditionalInfo}" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </dxg:GridColumn.DisplayTemplate>
+                </dxg:GridColumn>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView ShowTotalSummary="True" ShowAutoFilterRow="True" 
+                               BestFitArea="Rows" BestFitMode="VisibleRows" BestFitMaxRowCount="5" AllowEditing="False" FocusedRowChanged="TableView_FocusedRowChanged" ShowFocusedRectangle="True"
+                               ShowGroupPanel="False"
+                               RowDoubleClick="TableView_RowDoubleClick"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+
+    </Grid>
+</UserControl>

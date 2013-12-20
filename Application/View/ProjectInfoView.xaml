@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="FederalProjectManager.View.ProjectInfoView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" 
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid" 
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:model="clr-namespace:FederalProjectManager.Model"
+             xmlns:ORM="clr-namespace:FederalProjectManager.ORM" 
+             xmlns:local="clr-namespace:FederalProjectManager.View"
+             dx:ThemeManager.ThemeName="MetropolisDark"
+             mc:Ignorable="d" 
+             d:DesignHeight="420" d:DesignWidth="530">
+    <StackPanel>
+        <StackPanel>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                       HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Bottom" 
+                       FontSize="18" FontFamily="Segoe UI Light" Foreground="#FFE3E3E3" Text="Основные параметры проекта:"/>
+            <Grid>
+                <Grid Margin="0,15,0,5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="75"/>
+                        <ColumnDefinition Width="160"/>
+                    </Grid.ColumnDefinitions>
+            
+                    <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Заголовок</Label>
+                    <dxe:TextEdit x:Uid="CaptionText" x:Name="CaptionText" 
+                                  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" 
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                                  AllowNullInput="False" ValidateOnEnterKeyPressed="True"
+                                  EditValue="{Binding Project.Caption, ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                  IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+            
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Заказчик</Label>
+                    <dxe:ButtonEdit x:Uid="CustomerEdit" x:Name="CustomerEdit"
+                                    Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Height="25" IsTextEditable="False"
+                                    EditValue="{Binding Project.CustomerFullName, ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" 
+                                    DefaultButtonClick="CustomerEdit_DefaultButtonClick" 
+                                    IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+
+                    <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,10,5">Тип</Label>
+                    <dxe:ComboBoxEdit x:Uid="TypeLookup" x:Name="TypeLookup" 
+                                      Grid.Row="2" Grid.Column="3"
+                                      AllowNullInput="False" ValidateOnEnterKeyPressed="True"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                                      EditValue="{Binding Project.Type,  ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                      DisplayMember="Value" ValueMember="Key" IsTextEditable="False"
+                                      IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Приоритет</Label>
+                    <dxe:ComboBoxEdit x:Uid="PriorityLookup" x:Name="PriorityLookup" 
+                                      Grid.Row="2" Grid.Column="1" 
+                                      AllowNullInput="False" ValidateOnEnterKeyPressed="True"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                                      EditValue="{Binding Project.Priority, Converter={model:Int16ToInt32Converter},  ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                      DisplayMember="Value" ValueMember="Key" IsTextEditable="False"
+                                      IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Ответственный</Label>
+                    <dxe:TextEdit x:Uid="ResponsiblePersonText" x:Name="ResponsiblePersonText" 
+                                  Grid.Row="3" Grid.Column="1"
+                                  AllowNullInput="True" ValidateOnEnterKeyPressed="True"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                                  EditValue="{Binding Project.ResponsiblePerson,  ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                  IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+            
+                    <Label Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Margin="15,5,10,5">В работе</Label>
+                    <dxe:CheckEdit x:Uid="IsProjectInWorkCheck" x:Name="IsProjectInWorkCheck" 
+                                   Grid.Row="3" Grid.Column="3"
+                                   AllowNullInput="False" ValidateOnEnterKeyPressed="True"
+                                   EditValue="{Binding Project.IsInWork}"
+                                   IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+            
+                    <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Завершен</Label>
+                    <dxe:ProgressBarEdit Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
+                                         Height="20" HorizontalAlignment="Stretch" ShowBorder="True"
+                                         Minimum="0" Maximum="100" DisplayFormatString="Выполнено {0}%" ContentDisplayMode="Value"
+                                         Value="40"
+                                         EditValue="{Binding Project.Progress}"
+                                         IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+            
+                    <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Примечание</Label>
+                    <dxe:TextEdit x:Uid="NoteText" x:Name="NoteText" 
+                                  Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" 
+                                  AllowNullInput="True"
+                                  Height="90" HorizontalAlignment="Stretch" VerticalAlignment="Top" 
+                                  TextWrapping="Wrap"  ValidateOnEnterKeyPressed="True"
+                                  EditValue="{Binding Project.Note}"
+                                  IsReadOnly="{Binding Project.IsEditable, Converter={model:InverseBoolConverter}}"/>
+
+                </Grid>
+            </Grid>
+        </StackPanel>
+        <StackPanel Margin="0,15,0,0">
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                           HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Bottom" 
+                           FontSize="18" FontFamily="Segoe UI Light" Foreground="#FFE3E3E3" Text="Сводные параметры проекта:"/>
+            <Grid Margin="0,15,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="160"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5,5,10,5">Срок сдачи</Label>
+                <dxe:TextEdit Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" 
+                              HorizontalAlignment="Stretch" VerticalAlignment="Center" 
+                              AllowNullInput="False"
+                              EditValue="{Binding Project.ProjectDeadlineDate, StringFormat='dd.MM.yyyy HH:mm'}"
+                              IsReadOnly="True"/>
+                
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>
